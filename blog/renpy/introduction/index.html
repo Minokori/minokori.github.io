@@ -1,0 +1,1174 @@
+<!DOCTYPE html>
+<html lang="zh-CN" dir="ltr">
+    <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=3336&amp;path=livereload" data-no-instant defer></script><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="Ren&rsquo;py 引擎源码阅读\r0. 前言\r为什么要做这个\r一是想提升一下自己的编程的综合能力. 写个代码大家都会, 毕竟就是一门语言, 还是语法十分简单的语言. 但是编程的尽头是项目设计\n">
+<title>Ren&#39;Py 源码阅读 - introduction</title>
+
+
+<link rel="canonical" href="http://localhost:3336/blog/renpy/introduction/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap">
+
+
+<link rel="stylesheet" href="/scss/style.min.ebcd3f2f1c9d06a16d05ff8151d6c5807580be759dbe09b9b51ebf20c7279244.css"><meta property='og:title' content="Ren'Py 源码阅读 - introduction">
+<meta property='og:description' content="Ren&rsquo;py 引擎源码阅读\r0. 前言\r为什么要做这个\r一是想提升一下自己的编程的综合能力. 写个代码大家都会, 毕竟就是一门语言, 还是语法十分简单的语言. 但是编程的尽头是项目设计\n">
+<meta property='og:url' content='http://localhost:3336/blog/renpy/introduction/'>
+<meta property='og:site_name' content='水之氷的赛博功德箱'>
+<meta property='og:type' content='article'><meta property='article:section' content='Blog' /><meta property='article:published_time' content='2026-07-23T20:44:13&#43;08:00'/><meta property='article:modified_time' content='2026-07-23T20:44:13&#43;08:00'/>
+<meta name="twitter:title" content="Ren'Py 源码阅读 - introduction">
+<meta name="twitter:description" content="Ren&rsquo;py 引擎源码阅读\r0. 前言\r为什么要做这个\r一是想提升一下自己的编程的综合能力. 写个代码大家都会, 毕竟就是一门语言, 还是语法十分简单的语言. 但是编程的尽头是项目设计\n">
+    <link rel="shortcut icon" href="/img/favicon.png" />
+
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        <figure class="site-avatar">
+            <a href="/">
+                <img src="/img/avatar.jpg" width="878" height="878"
+                    class="site-logo" loading="lazy" alt="Avatar">
+            </a>
+            
+        </figure>
+        
+
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">水之氷的赛博功德箱</a></h1>
+            <h2 class="site-description"><em>&ldquo;写下来才能在体外稳定存在&rdquo;</em> — <strong>艾洛温·克劳福德</strong> from <em>《畅梦人》</em>, @歌味觉死</h2>
+        </div>
+    </header><ol class="menu-social">
+        
+        <li>
+            <a href='https://github.com/minokori'  title="GitHub"  rel="me">
+                
+                
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                
+            </a>
+        </li>
+        
+        <li>
+            <a href='https://space.bilibili.com/23640015'  title="Bilibili"  rel="me">
+                
+                
+                <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-brand-bilibili"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M3 10a4 4 0 0 1 4 -4h10a4 4 0 0 1 4 4v6a4 4 0 0 1 -4 4h-10a4 4 0 0 1 -4 -4v-6z" /><path d="M8 3l2 3" /><path d="M16 3l-2 3" /><path d="M9 13v-2" /><path d="M15 11v2" /></svg>
+                
+            </a>
+        </li>
+        
+    </ol><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/about/' >
+                
+                <span>关于</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/blog/' >
+                
+                <span>博客</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                <li id="dark-mode-toggle">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <span>暗色模式</span>
+                </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">目录</h2>
+        
+        <div class="widget--toc">
+            <nav class="toc-nav" id="TableOfContents">
+                
+  <ol>
+    <li><a href="#0-前言">0. 前言</a>
+      <ol>
+        <li><a href="#为什么要做这个">为什么要做这个</a></li>
+      </ol>
+    </li>
+    <li><a href="#1-renpy-引擎的文件结构">1. <code>Ren&#39;py</code> 引擎的文件结构</a></li>
+    <li><a href="#2-renpy-引擎是如何运行的">2. <code>Ren&#39;Py</code> 引擎是如何运行的</a></li>
+    <li><a href="#3-正式潜入-renpy">3. 正式潜入 <code>Ren&#39;Py</code></a>
+      <ol>
+        <li><a href="#31-object-renpy-的终极基类">3.1 <code>Object</code>: Ren’Py 的终极基类</a></li>
+        <li><a href="#32-sentinel-属于-renpy-的单例模式">3.2 <code>Sentinel</code>: 属于 Ren’Py 的单例模式</a></li>
+      </ol>
+    </li>
+  </ol>
+
+            </nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/blog/renpy/introduction/">Ren&#39;Py 源码阅读 - introduction</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    
+    
+    
+    <footer class="article-meta">
+        
+            <div class="inline-meta">
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                    <time class="article-time--published" datetime='2026-07-23T20:44:13&#43;08:00'>2026年7月23日星期四</time>
+                
+
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                    <time class="article-time--reading">
+                        阅读时长: 14 分钟
+                    </time>
+                
+            </div>
+        
+
+        
+
+        
+    </footer>
+    
+</div>
+
+</header>
+
+    
+    <aside class="article-toc">
+        <details>
+            <summary>
+                <div class="article-toc-title">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-chevron-right"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 6l6 6l-6 6" /></svg>
+                    <span>目录</span>
+                </div>
+            </summary>
+            <nav class="toc-nav">
+                
+  <ol>
+    <li><a href="#0-前言">0. 前言</a>
+      <ol>
+        <li><a href="#为什么要做这个">为什么要做这个</a></li>
+      </ol>
+    </li>
+    <li><a href="#1-renpy-引擎的文件结构">1. <code>Ren&#39;py</code> 引擎的文件结构</a></li>
+    <li><a href="#2-renpy-引擎是如何运行的">2. <code>Ren&#39;Py</code> 引擎是如何运行的</a></li>
+    <li><a href="#3-正式潜入-renpy">3. 正式潜入 <code>Ren&#39;Py</code></a>
+      <ol>
+        <li><a href="#31-object-renpy-的终极基类">3.1 <code>Object</code>: Ren’Py 的终极基类</a></li>
+        <li><a href="#32-sentinel-属于-renpy-的单例模式">3.2 <code>Sentinel</code>: 属于 Ren’Py 的单例模式</a></li>
+      </ol>
+    </li>
+  </ol>
+
+            </nav>
+        </details>
+    </aside>
+    
+
+    <section class="article-content">
+    
+    
+    <h1 id="renpy-引擎源码阅读"><a href="#renpy-%e5%bc%95%e6%93%8e%e6%ba%90%e7%a0%81%e9%98%85%e8%af%bb" class="header-anchor"></a>Ren&rsquo;py 引擎源码阅读
+</h1><h2 id="0-前言"><a href="#0-%e5%89%8d%e8%a8%80" class="header-anchor"></a>0. 前言
+</h2><h3 id="为什么要做这个"><a href="#%e4%b8%ba%e4%bb%80%e4%b9%88%e8%a6%81%e5%81%9a%e8%bf%99%e4%b8%aa" class="header-anchor"></a>为什么要做这个
+</h3><p>一是想提升一下自己的编程的综合能力. 写个代码大家都会, 毕竟就是一门语言, 还是语法十分简单的语言. 但是编程的尽头是项目设计</p>
+<p>二是我是一个 <code>.NET</code> 信徒. 我一直想用 <code>.NET</code> 做一个类似 <code>Ren'py</code> 的视觉小说引擎. 但实际上, 我所知道的<strong>开源</strong>视觉小说引擎好用的应该只有基于 <code>Python</code> 的 <code>Ren'Py</code> 和 基于<code>TypeScript</code> 的 <code>OpenWebGal</code></p>
+<p>三是 <code>Ren'Py</code> 的文档真是烂到了一种程度. 这一点我觉得甚至能拉出好几个子条目来说.</p>
+<p>一个会去看你文档的人真正想看的是什么? 首先, 他肯定是有高度自定义的需求. 那么他会想看你引擎的工作原理, 会想看你类里的继承组合关系, 会想看你引擎运行时各个组件的生命周期. 说白了, 一个会去翻你文档的人在某种程度上肯定希望能够以 <strong>纯 Python</strong> 的形式编写一个 Ren&rsquo;py 游戏, 或者以 <strong>Python 包</strong> 的方式使用 Ren&rsquo;py 引擎, 又或者是写一些 <strong>Ren&rsquo;Py</strong> 插件供开源社区使用.类似下面代码的感觉:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="c1"># 纯 Python 编写 Ren&#39;py 代码</span>
+</span></span><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">renpy.Character</span> <span class="kn">import</span> <span class="n">ADVCharacter</span> <span class="k">as</span> <span class="n">Character</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 定义角色</span>
+</span></span><span class="line"><span class="cl"><span class="n">Lucy</span> <span class="o">=</span> <span class="n">Character</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&#34;Lucy&#34;</span><span class="p">,</span> <span class="n">kind</span> <span class="o">=</span> <span class="s2">&#34;adv&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">Lucy</span><span class="o">.</span><span class="n">say</span><span class="p">(</span><span class="s2">&#34;Hello&#34;</span><span class="p">)</span>  <span class="c1"># 注: 事实上, Say 根本不是角色类的方法. 孩子们, 这很不 OOC,该行代码只是演示目的</span>
+</span></span><span class="line"><span class="cl"><span class="n">Lucy</span><span class="o">.</span><span class="n">move</span><span class="p">(</span><span class="s2">&#34;Left&#34;</span><span class="p">)</span>  <span class="c1"># 注: 同上</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="c1"># 以包的形式使用 Ren&#39;py 引擎</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">renpy</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">MyUtils</span>  <span class="c1"># 假设这是你编写的一个实用工具模块, 用于将 renpy 脚本解析为其他视觉小说引擎可解析的格式</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 加载 renpy 脚本</span>
+</span></span><span class="line"><span class="cl"><span class="n">renpy_script</span>  <span class="o">=</span> <span class="n">renpy</span><span class="o">.</span><span class="n">script</span><span class="o">.</span><span class="n">Script</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="n">renpy_Script</span><span class="o">.</span><span class="n">load_script</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 将 renpy 脚本导出为其他视觉小说引擎可解析的格式</span>
+</span></span><span class="line"><span class="cl"><span class="n">openwebgal_script</span> <span class="o">=</span> <span class="n">MyUtils</span><span class="o">.</span><span class="n">renpy_to_openwebgal</span><span class="p">(</span><span class="n">renpy_script</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 保存该脚本</span>
+</span></span><span class="line"><span class="cl"><span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&#34;script.txt&#34;</span><span class="p">,</span> <span class="s2">&#34;w&#34;</span><span class="p">,</span> <span class="n">encoding</span> <span class="o">=</span> <span class="s2">&#34;utf-8&#34;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">    <span class="n">f</span><span class="o">.</span><span class="n">wirte</span><span class="p">(</span><span class="n">openwebgal_script</span><span class="p">)</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-py" data-lang="py"><span class="line"><span class="cl"><span class="c1"># 写一些 Ren&#39;py 插件供开源社区使用</span>
+</span></span><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">renpy.Character</span> <span class="kn">import</span> <span class="n">Character</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">MyCharacter</span><span class="p">(</span><span class="n">Character</span><span class="p">):</span>  <span class="c1"># 一个自定义角色类, 有一个好感度字段</span>
+</span></span><span class="line"><span class="cl">    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">affinity</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># 初始化好感度</span>
+</span></span><span class="line"><span class="cl">        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="o">...</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="1-renpy-引擎的文件结构"><a href="#1-renpy-%e5%bc%95%e6%93%8e%e7%9a%84%e6%96%87%e4%bb%b6%e7%bb%93%e6%9e%84" class="header-anchor"></a>1. <code>Ren'py</code> 引擎的文件结构
+</h2>
+    <blockquote>
+        <p><em>本文档最开始撰写时, <code>Ren'Py</code> 引擎是 Windows 系统上的 <code>8.3.7</code> 版本, 但在更新到 <strong>8.5.*</strong> 版本后, Ren&rsquo;Py 将内置的某些 <code>Cython</code> 包直接内嵌到它的 Python 运行时里了, 因此和这些库有关的说明可能过时</em></p>
+
+    </blockquote>
+<p>打开 <code>Ren'Py</code> 的文件存放位置, 文件夹和文件清单如下:</p>
+<p><strong>文件夹</strong></p>
+<ul>
+<li><code>doc</code> :保存 <code>Ren'Py</code> 说明文档的文件夹. <em>删除该文件夹不影响 <code>Ren'Py</code> 引擎运行.</em></li>
+<li><code>gui</code> :预定义了一些 GUI <strong>模板</strong> 文件. <em>新建一个<code>Ren'Py</code> 项目时, 该文件夹的内容将被拷贝至项目文件夹.</em></li>
+<li><code>launcher</code>: 预定义的一个 <code>Ren'Py</code> 项目. <em>也是 Ren&rsquo;Py 引擎的 UI. 你可以理解为你最熟悉的 <code>Ren'Py</code> 引擎的 UI 其实也是一个 <code>Ren'Py</code> 游戏, 如果你打开这个文件夹, 你会发现它的文件结构和一般的 <code>Ren'Py</code> 项目一致.</em></li>
+<li><code>lib</code>: <code>Ren'Py</code> 的运行时. <em>也就是 <code>Ren'Py</code> 使用的 <code>Python</code> 环境.</em></li>
+<li><code>module</code>: 编译 <code>Ren'Py</code> 使用的某些二进制 <code>Python</code> 依赖包使用的资源. <em>由于 Ren&rsquo;Py 引擎已经编译完成, 删除该文件夹不影响 <code>Ren'Py</code> 引擎运行.</em></li>
+<li><code>renpy</code>: <code>Ren'Py</code> 引擎的本体. <strong>这个文件夹的内容将是后续讨论的重点 (也几乎是全部) 内容</strong></li>
+<li><code>renpy.app</code>: MacOS 上 <code>Ren'Py</code> 的软件. <em>相当于 Windows 下的 renpy.exe</em></li>
+<li><code>sdk-fonts</code>: <code>Ren'Py</code> 自带的默认字体.</li>
+<li><code>the_question</code>: 预定义的一个 <code>Ren'Py</code> 项目. <em>你在 <code>Ren'Py</code> 引擎界面看到的同捆的那个示例项目</em></li>
+<li><code>tmp</code>: <code>Ren'Py</code> 引擎的调试信息的输出位置. <em>准确的说, 是上面说到的 <code>launcher</code> 这个项目调试信息的输出位置</em></li>
+<li><code>tutorial</code>: 和上面说到的 <code>the_question</code> 相同,预定义的一个 <code>Ren'Py</code> 项目. <em>你在 <code>Ren'Py</code> 引擎界面看到的同捆的那个示例项目</em></li>
+<li><code>update</code>: <code>Ren'Py</code> 引擎的更新日志保存位置</li>
+</ul>
+<p><strong>文件</strong></p>
+<p><code>LICENSE</code>, <code>LICENSE.txt</code>: <code>Ren'Py</code> 的版权信息, <em>删除该文件不会影响 <code>Ren'Py</code> 引擎的运行, 但这很没素质了</em></p>
+<p><code>renpy.exe</code> : Windows 下的可执行文件</p>
+<p><code>renpy.sh</code> : Liunx 下的执行脚本</p>
+<p><code>renpy.py</code> : <code>Ren'Py</code> 的程序入口</p>
+<p>在下一节, 我们将讨论 <code>Ren'Py</code> 是怎么运行起来的, 这些内容从 <code>renpy.sh</code> 可一窥究竟.</p>
+<h2 id="2-renpy-引擎是如何运行的"><a href="#2-renpy-%e5%bc%95%e6%93%8e%e6%98%af%e5%a6%82%e4%bd%95%e8%bf%90%e8%a1%8c%e7%9a%84" class="header-anchor"></a>2. <code>Ren'Py</code> 引擎是如何运行的
+</h2><p>如何启动 <code>Ren'Py</code> ? 这个问题不必多说, 运行 <code>renpy.exe</code> 即可:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="line"><span class="cl"><span class="n">你的</span> <span class="n">renpy</span><span class="p">.</span><span class="py">exe</span> <span class="n">文件夹路径</span><span class="p">&gt;</span> <span class="p">.\</span><span class="n">renpy</span><span class="p">.</span><span class="py">exe</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>同时, 我们又知道, <code>Ren'Py</code> 是由 <code>Python</code> 语言书写的, 那么显然, <code>Ren'Py</code> 引擎应该有一个我们所熟知的 <code>Python</code> 程序入口点, 类似下面:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="c1"># 作为 renpy 入口点的 .py 文件</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">...</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&#34;__main__&#34;</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">    <span class="n">renpy</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>  <span class="c1"># 启动 Ren&#39;Py 引擎</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>这样, 我们可以在 IDE 中打开该文件, 点击运行, 也能启动 <code>Ren'Py</code> 引擎, 就就像运行自己的 <code>Python</code> 脚本一样.</p>
+<p>恰巧, 文件夹内恰巧有一个 <code>renpy.py</code> 的文件, 其中最底部恰巧也有我们最为熟悉的一段代码:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&#34;__main__&#34;</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">    <span class="n">main</span><span class="p">()</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>让我们实际运行一下该文件试试:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">你的 renpy.exe 文件夹路径&gt; python renpy.py
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>不出意外的话, 将出现一串类似下面的报错信息, 提示你脚本运行失败:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="line"><span class="cl"><span class="n">Could</span> <span class="n">not</span> <span class="n">import</span> <span class="n">pygame_sdl2</span><span class="p">.</span> <span class="n">Please</span> <span class="n">ensure</span> <span class="n">that</span> <span class="n">this</span> <span class="n">program</span> <span class="n">has</span> <span class="n">been</span> <span class="n">built</span>
+</span></span><span class="line"><span class="cl"><span class="n">and</span> <span class="n">unpacked</span> <span class="n">properly</span><span class="p">.</span> <span class="n">Also</span><span class="p">,</span> <span class="n">make</span> <span class="n">sure</span> <span class="n">that</span> <span class="n">the</span> <span class="n">directories</span> <span class="n">containing</span>
+</span></span><span class="line"><span class="cl"><span class="n">this</span> <span class="n">program</span> <span class="k">do</span> <span class="n">not</span> <span class="n">contain</span> <span class="err">:</span> <span class="n">or</span> <span class="p">;</span> <span class="k">in</span> <span class="n">their</span> <span class="n">names</span><span class="p">.</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">You</span> <span class="n">may</span> <span class="n">be</span> <span class="n">using</span> <span class="n">a</span> <span class="n">system</span> <span class="n">install</span> <span class="n">of</span> <span class="n">python</span><span class="p">.</span> <span class="n">Please</span> <span class="n">run</span> <span class="n">renpy</span><span class="p">.</span><span class="n">sh</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="n">renpy</span><span class="p">.</span><span class="n">exe</span><span class="p">,</span> <span class="n">or</span> <span class="n">renpy</span><span class="p">.</span><span class="py">app</span> <span class="n">instead</span><span class="p">.</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">Traceback</span> <span class="p">(</span><span class="n">most</span> <span class="n">recent</span> <span class="n">call</span> <span class="n">last</span><span class="p">)</span><span class="err">:</span>
+</span></span><span class="line"><span class="cl">  <span class="n">File</span> <span class="s2">&#34;D:\renpy\renpy.py&#34;</span><span class="p">,</span> <span class="n">line</span> <span class="mf">310</span><span class="p">,</span> <span class="k">in</span> <span class="p">&lt;</span><span class="n">module</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">main</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">    <span class="p">~~~~^^</span>
+</span></span><span class="line"><span class="cl">  <span class="n">File</span> <span class="s2">&#34;D:\renpy\renpy.py&#34;</span><span class="p">,</span> <span class="n">line</span> <span class="mf">306</span><span class="p">,</span> <span class="k">in</span> <span class="n">main</span>
+</span></span><span class="line"><span class="cl">    <span class="n">renpy</span><span class="p">.</span><span class="py">bootstrap</span><span class="p">.</span><span class="py">bootstrap</span><span class="p">(</span><span class="n">renpy_base</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="p">~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^</span>
+</span></span><span class="line"><span class="cl">  <span class="n">File</span> <span class="s2">&#34;D:\renpy\renpy\bootstrap.py&#34;</span><span class="p">,</span> <span class="n">line</span> <span class="mf">313</span><span class="p">,</span> <span class="k">in</span> <span class="n">bootstrap</span>
+</span></span><span class="line"><span class="cl">    <span class="n">import</span> <span class="n">pygame_sdl2</span> <span class="c"># type: ignore</span>
+</span></span><span class="line"><span class="cl">    <span class="p">^^^^^^^^^^^^^^^^^^</span>
+</span></span><span class="line"><span class="cl"><span class="n">ModuleNotFoundError</span><span class="err">:</span> <span class="n">No</span> <span class="n">module</span> <span class="n">named</span> <span class="s1">&#39;pygame_sdl2&#39;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>你可能会说, 这个太简单了, 我直接一个 <code>pip install pygame_sdl2</code> 不就可以了吗?</p>
+<p>非常遗憾的是, <code>pygame_sdl2</code> 也是一个由 <code>RenP'y</code> 团队维护的仓库, 并且明确注明了该项目目前仅用于支持 <code>Ren'Py</code> 引擎, 不再单独发行任何发行版至 PyPi 供大家开箱即用, 并且建议大家直接使用 <code>pygame</code> 作为替代方案.</p>
+
+    <blockquote>
+        <p><strong>手动编译 pygame_sdl2?</strong></p>
+<p>如果你有能力自己手动编译适用你的 Python 版本的 pygame_sdl2, 那么该文档显然不适合你了, 你完全有能力自己阅读 <code>Ren'Py</code> 的源码, 而不是该文档.</p>
+<p><del>事实上, 我自己尝试编译适用于我自己使用的 Python 3.13 版本的 pygame_sdl2 还没有成功, Cmake显然不是一个 Python + .NET 爱好者擅长的领域, 我的评价是不如 nuget 一根</del></p>
+<p><em>当然你也有一个取巧的办法, 就是把 <code>Ren'Py</code> 自带的 <code>pygame_sdl2</code> 包抠出来塞到你的 python 环境中. 当然, 前提是你的 Python 环境也是 3.9 的话 (理论上可行, 但我自己没有尝试过. 话说 Python 3.9 已经是 EOL 了, <code>Ren'Py</code> 却刚把它作为运行时. 唉, 遗老)</em></p>
+<hr>
+<p>现在(2026年7月23日)的最新版本是 <code>Ren'Py 8.5.2</code> , <code>Python</code> 解释器已经是 <code>3.12</code> 了.</p>
+
+    </blockquote>
+<p>那么, <code>Ren'Py</code> 是怎么成功运行这个脚本的呢? 它所依赖的 <code>pygame_sdl2</code> 在哪里呢? 打开 <code>renpy</code> 文件夹, 我们并没有发现 <code>pygame_sdl2</code> 这个子包. 也就是说, <code>pygame_sdl2</code> 这个包直接存在于 <code>Ren'Py</code> 的 <code>Python</code> 环境中, 而不是存在于 <code>renpy</code> 引擎自己的包中.</p>
+
+    <blockquote>
+        <p>上面这段话有点绕, 你可以这样理解: <code>pygame_sdl2</code> 这个包存在于 <code>Ren'Py</code> 使用的 python 环境中, 就类似于 <code>os</code>, <code>typing</code>, 等这些原生包中, 而不是像你在工作文件夹中建立了一个文件夹, 其中存放了 <code>__init__.py</code> , 把这个文件夹告诉 python &ldquo;我是一个包, 你可以 import 我&rdquo;.</p>
+
+    </blockquote>
+<p>我们把目光转移到 <code>renpy.sh</code> 上. 前面说过, 该脚本文件相当于 Linux 系统上的 <code>renpy.exe</code>, 就是用来启动 <code>Ren'Py</code> 引擎的. 不同的是这是一个脚本文件, 类似于 Windows 上的 <code>*.bat</code> 文件. 回想一下, 你在玩 &ldquo;学习版&rdquo; 或者 mod版 的某些游戏时, 是不是会有一个类似于 &ldquo;运行游戏点击这个&rdquo; 的 <code>*.bat</code> 文件? 与之类似, 这类脚本文件通常是设置了一些系统变量, 之后再启动对应的可执行文件, 以实现某些设置(比如加载汉化文件, 为了运行老游戏的兼容性优化, 设置分辨率等操作.)</p>
+<p>总之, 虽然我们无法一窥 <code>renpy.exe</code> 内部的运行, 但同样功能的 <code>renpy.sh</code> 却是可以直接打开的.总而言之, 我们打开该文件, 大致了解一下其中的操作.</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">  1
+</span><span class="lnt">  2
+</span><span class="lnt">  3
+</span><span class="lnt">  4
+</span><span class="lnt">  5
+</span><span class="lnt">  6
+</span><span class="lnt">  7
+</span><span class="lnt">  8
+</span><span class="lnt">  9
+</span><span class="lnt"> 10
+</span><span class="lnt"> 11
+</span><span class="lnt"> 12
+</span><span class="lnt"> 13
+</span><span class="lnt"> 14
+</span><span class="lnt"> 15
+</span><span class="lnt"> 16
+</span><span class="lnt"> 17
+</span><span class="lnt"> 18
+</span><span class="lnt"> 19
+</span><span class="lnt"> 20
+</span><span class="lnt"> 21
+</span><span class="lnt"> 22
+</span><span class="lnt"> 23
+</span><span class="lnt"> 24
+</span><span class="lnt"> 25
+</span><span class="lnt"> 26
+</span><span class="lnt"> 27
+</span><span class="lnt"> 28
+</span><span class="lnt"> 29
+</span><span class="lnt"> 30
+</span><span class="lnt"> 31
+</span><span class="lnt"> 32
+</span><span class="lnt"> 33
+</span><span class="lnt"> 34
+</span><span class="lnt"> 35
+</span><span class="lnt"> 36
+</span><span class="lnt"> 37
+</span><span class="lnt"> 38
+</span><span class="lnt"> 39
+</span><span class="lnt"> 40
+</span><span class="lnt"> 41
+</span><span class="lnt"> 42
+</span><span class="lnt"> 43
+</span><span class="lnt"> 44
+</span><span class="lnt"> 45
+</span><span class="lnt"> 46
+</span><span class="lnt"> 47
+</span><span class="lnt"> 48
+</span><span class="lnt"> 49
+</span><span class="lnt"> 50
+</span><span class="lnt"> 51
+</span><span class="lnt"> 52
+</span><span class="lnt"> 53
+</span><span class="lnt"> 54
+</span><span class="lnt"> 55
+</span><span class="lnt"> 56
+</span><span class="lnt"> 57
+</span><span class="lnt"> 58
+</span><span class="lnt"> 59
+</span><span class="lnt"> 60
+</span><span class="lnt"> 61
+</span><span class="lnt"> 62
+</span><span class="lnt"> 63
+</span><span class="lnt"> 64
+</span><span class="lnt"> 65
+</span><span class="lnt"> 66
+</span><span class="lnt"> 67
+</span><span class="lnt"> 68
+</span><span class="lnt"> 69
+</span><span class="lnt"> 70
+</span><span class="lnt"> 71
+</span><span class="lnt"> 72
+</span><span class="lnt"> 73
+</span><span class="lnt"> 74
+</span><span class="lnt"> 75
+</span><span class="lnt"> 76
+</span><span class="lnt"> 77
+</span><span class="lnt"> 78
+</span><span class="lnt"> 79
+</span><span class="lnt"> 80
+</span><span class="lnt"> 81
+</span><span class="lnt"> 82
+</span><span class="lnt"> 83
+</span><span class="lnt"> 84
+</span><span class="lnt"> 85
+</span><span class="lnt"> 86
+</span><span class="lnt"> 87
+</span><span class="lnt"> 88
+</span><span class="lnt"> 89
+</span><span class="lnt"> 90
+</span><span class="lnt"> 91
+</span><span class="lnt"> 92
+</span><span class="lnt"> 93
+</span><span class="lnt"> 94
+</span><span class="lnt"> 95
+</span><span class="lnt"> 96
+</span><span class="lnt"> 97
+</span><span class="lnt"> 98
+</span><span class="lnt"> 99
+</span><span class="lnt">100
+</span><span class="lnt">101
+</span><span class="lnt">102
+</span><span class="lnt">103
+</span><span class="lnt">104
+</span><span class="lnt">105
+</span><span class="lnt">106
+</span><span class="lnt">107
+</span><span class="lnt">108
+</span><span class="lnt">109
+</span><span class="lnt">110
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="cp">#!/bin/sh
+</span></span></span><span class="line"><span class="cl"><span class="c1"># 声明这是一个 shell 脚本，使用 /bin/sh 解释器执行</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nv">PYTHON</span><span class="o">=</span><span class="s2">&#34;py3&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 设置 Python 解释器的名称为 &#34;py3&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nv">SCRIPT</span><span class="o">=</span><span class="s2">&#34;</span><span class="nv">$0</span><span class="s2">&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># $0 代表当前脚本的名称，将其保存在 SCRIPT 变量中</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># Resolve the chain of symlinks leading to this script.</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 解析指向当前脚本的所有符号链接，找到真实路径</span>
+</span></span><span class="line"><span class="cl"><span class="k">while</span> <span class="o">[</span> -L <span class="s2">&#34;</span><span class="nv">$SCRIPT</span><span class="s2">&#34;</span> <span class="o">]</span> <span class="p">;</span> <span class="k">do</span>
+</span></span><span class="line"><span class="cl">    <span class="c1"># -L 测试文件是否为符号链接，当 SCRIPT 是符号链接时循环继续</span>
+</span></span><span class="line"><span class="cl">    <span class="nv">LINK</span><span class="o">=</span><span class="k">$(</span>readlink <span class="s2">&#34;</span><span class="nv">$SCRIPT</span><span class="s2">&#34;</span><span class="k">)</span>
+</span></span><span class="line"><span class="cl">    <span class="c1"># readlink 命令读取符号链接的目标，即 SCRIPT 指向的文件</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">case</span> <span class="s2">&#34;</span><span class="nv">$LINK</span><span class="s2">&#34;</span> in
+</span></span><span class="line"><span class="cl">        /*<span class="o">)</span>
+</span></span><span class="line"><span class="cl">            <span class="c1"># 如果链接以 / 开头(绝对路径)，则直接使用</span>
+</span></span><span class="line"><span class="cl">            <span class="nv">SCRIPT</span><span class="o">=</span><span class="s2">&#34;</span><span class="nv">$LINK</span><span class="s2">&#34;</span>
+</span></span><span class="line"><span class="cl">            <span class="p">;;</span>
+</span></span><span class="line"><span class="cl">        *<span class="o">)</span>
+</span></span><span class="line"><span class="cl">            <span class="c1"># 否则(相对路径)，将其与当前目录结合</span>
+</span></span><span class="line"><span class="cl">            <span class="nv">SCRIPT</span><span class="o">=</span><span class="s2">&#34;</span><span class="k">$(</span>dirname <span class="s2">&#34;</span><span class="nv">$SCRIPT</span><span class="s2">&#34;</span><span class="k">)</span><span class="s2">/</span><span class="nv">$LINK</span><span class="s2">&#34;</span>
+</span></span><span class="line"><span class="cl">            <span class="c1"># dirname 获取 SCRIPT 所在的目录，然后与 LINK 拼接</span>
+</span></span><span class="line"><span class="cl">            <span class="p">;;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">esac</span>
+</span></span><span class="line"><span class="cl">    <span class="c1"># case 语句结束</span>
+</span></span><span class="line"><span class="cl"><span class="k">done</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 循环结束后，SCRIPT 变量包含真实文件路径，不再是符号链接</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># The directory containing this shell script - an absolute path.</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 获取包含此脚本的目录的绝对路径</span>
+</span></span><span class="line"><span class="cl"><span class="nv">ROOT</span><span class="o">=</span><span class="k">$(</span>dirname <span class="s2">&#34;</span><span class="nv">$SCRIPT</span><span class="s2">&#34;</span><span class="k">)</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 提取 SCRIPT 的目录部分</span>
+</span></span><span class="line"><span class="cl"><span class="nv">ROOT</span><span class="o">=</span><span class="k">$(</span><span class="nb">cd</span> <span class="s2">&#34;</span><span class="nv">$ROOT</span><span class="s2">&#34;</span><span class="p">;</span> <span class="nb">pwd</span><span class="k">)</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 进入该目录并执行 pwd，获取绝对路径</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># The name of this shell script without the .sh on the end.</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 获取脚本名称，去掉 .sh 后缀</span>
+</span></span><span class="line"><span class="cl"><span class="nv">BASEFILE</span><span class="o">=</span><span class="k">$(</span>basename <span class="s2">&#34;</span><span class="nv">$SCRIPT</span><span class="s2">&#34;</span> .sh<span class="k">)</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># basename 命令提取文件名，第二个参数指定要去掉的后缀</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">if</span> <span class="o">[</span> -z <span class="s2">&#34;</span><span class="nv">$RENPY_PLATFORM</span><span class="s2">&#34;</span> <span class="o">]</span> <span class="p">;</span> <span class="k">then</span>
+</span></span><span class="line"><span class="cl">    <span class="c1"># -z 测试字符串是否为空，如果环境变量 RENPY_PLATFORM 未设置则执行下面的代码</span>
+</span></span><span class="line"><span class="cl">    <span class="nv">RENPY_PLATFORM</span><span class="o">=</span><span class="s2">&#34;</span><span class="k">$(</span>uname -s<span class="k">)</span><span class="s2">-</span><span class="k">$(</span>uname -m<span class="k">)</span><span class="s2">&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="c1"># 使用系统名称(uname -s)和机器硬件名称(uname -m)组合设置平台标识</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">case</span> <span class="s2">&#34;</span><span class="nv">$RENPY_PLATFORM</span><span class="s2">&#34;</span> in
+</span></span><span class="line"><span class="cl">        <span class="c1"># 根据检测到的平台标识进行具体分类</span>
+</span></span><span class="line"><span class="cl">        Darwin-*<span class="p">|</span>mac-*<span class="o">)</span>
+</span></span><span class="line"><span class="cl">            <span class="c1"># 匹配 macOS (Darwin 是 macOS 的内核名)</span>
+</span></span><span class="line"><span class="cl">            <span class="nv">RENPY_PLATFORM</span><span class="o">=</span><span class="s2">&#34;mac-universal&#34;</span>
+</span></span><span class="line"><span class="cl">            <span class="p">;;</span>
+</span></span><span class="line"><span class="cl">        *-x86_64<span class="p">|</span>amd64<span class="o">)</span>
+</span></span><span class="line"><span class="cl">            <span class="c1"># 匹配 64 位 x86 架构</span>
+</span></span><span class="line"><span class="cl">            <span class="nv">RENPY_PLATFORM</span><span class="o">=</span><span class="s2">&#34;linux-x86_64&#34;</span>
+</span></span><span class="line"><span class="cl">            <span class="p">;;</span>
+</span></span><span class="line"><span class="cl">        *-i*86<span class="o">)</span>
+</span></span><span class="line"><span class="cl">            <span class="c1"># 匹配 32 位 x86 架构(如 i386, i586, i686 等)</span>
+</span></span><span class="line"><span class="cl">            <span class="nv">RENPY_PLATFORM</span><span class="o">=</span><span class="s2">&#34;linux-i686&#34;</span>
+</span></span><span class="line"><span class="cl">            <span class="p">;;</span>
+</span></span><span class="line"><span class="cl">        Linux-*<span class="o">)</span>
+</span></span><span class="line"><span class="cl">            <span class="c1"># 匹配其他 Linux 平台，保留检测到的具体架构</span>
+</span></span><span class="line"><span class="cl">            <span class="nv">RENPY_PLATFORM</span><span class="o">=</span><span class="s2">&#34;linux-</span><span class="k">$(</span>uname -m<span class="k">)</span><span class="s2">&#34;</span>
+</span></span><span class="line"><span class="cl">            <span class="p">;;</span>
+</span></span><span class="line"><span class="cl">        *<span class="o">)</span>
+</span></span><span class="line"><span class="cl">            <span class="c1"># 默认情况下不做任何修改</span>
+</span></span><span class="line"><span class="cl">            <span class="p">;;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">esac</span>
+</span></span><span class="line"><span class="cl">    <span class="c1"># case 语句结束</span>
+</span></span><span class="line"><span class="cl"><span class="k">fi</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># if 语句结束</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 设置库文件路径，结合根目录、Python 版本和平台信息</span>
+</span></span><span class="line"><span class="cl"><span class="nv">LIB</span><span class="o">=</span><span class="s2">&#34;</span><span class="nv">$ROOT</span><span class="s2">/lib/</span><span class="nv">$PYTHON</span><span class="s2">-</span><span class="nv">$RENPY_PLATFORM</span><span class="s2">&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">if</span> ! <span class="nb">test</span> -d <span class="s2">&#34;</span><span class="nv">$LIB</span><span class="s2">&#34;</span><span class="p">;</span> <span class="k">then</span>
+</span></span><span class="line"><span class="cl">    <span class="c1"># 检查 LIB 目录是否存在，如果不存在则执行下面的代码</span>
+</span></span><span class="line"><span class="cl">    <span class="c1"># 输出错误信息，提示用户平台文件未找到</span>
+</span></span><span class="line"><span class="cl">    <span class="nb">echo</span> <span class="s2">&#34;Ren&#39;Py platform files not found in:&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="nb">echo</span>
+</span></span><span class="line"><span class="cl">    <span class="nb">echo</span> <span class="s2">&#34;</span><span class="nv">$LIB</span><span class="s2">&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="nb">echo</span>
+</span></span><span class="line"><span class="cl">    <span class="nb">echo</span> <span class="s2">&#34;Please compile the platform files using the instructions in README.md&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="nb">echo</span> <span class="s2">&#34;or point them to an existing installation using ./after_checkout.sh &lt;path&gt;.&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="nb">echo</span>
+</span></span><span class="line"><span class="cl">    <span class="nb">echo</span> <span class="s2">&#34;Alternatively, please set RENPY_PLATFORM to a different platform.&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="nb">exit</span> <span class="m">1</span>
+</span></span><span class="line"><span class="cl">    <span class="c1"># 退出脚本，返回错误代码 1</span>
+</span></span><span class="line"><span class="cl"><span class="k">fi</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">if</span> <span class="o">[</span> -e <span class="s2">&#34;</span><span class="nv">$LIB</span><span class="s2">/</span><span class="nv">$BASEFILE</span><span class="s2">&#34;</span> <span class="o">]</span> <span class="p">;</span> <span class="k">then</span>
+</span></span><span class="line"><span class="cl">    <span class="c1"># -e 测试文件是否存在</span>
+</span></span><span class="line"><span class="cl">    <span class="c1"># 如果以脚本名命名的可执行文件存在，则执行它</span>
+</span></span><span class="line"><span class="cl">    <span class="nb">exec</span> <span class="nv">$RENPY_GDB</span> <span class="s2">&#34;</span><span class="nv">$LIB</span><span class="s2">/</span><span class="nv">$BASEFILE</span><span class="s2">&#34;</span> <span class="s2">&#34;</span><span class="nv">$@</span><span class="s2">&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="c1"># exec 会替换当前进程，$RENPY_GDB 是可能设置的调试器</span>
+</span></span><span class="line"><span class="cl">    <span class="c1"># &#34;$@&#34; 传递所有命令行参数</span>
+</span></span><span class="line"><span class="cl"><span class="k">fi</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">if</span> <span class="o">[</span> -e <span class="s2">&#34;</span><span class="nv">$LIB</span><span class="s2">/renpy&#34;</span> <span class="o">]</span> <span class="p">;</span> <span class="k">then</span>
+</span></span><span class="line"><span class="cl">    <span class="c1"># 如果名为 renpy 的可执行文件存在，则执行它</span>
+</span></span><span class="line"><span class="cl">    <span class="nb">exec</span> <span class="nv">$RENPY_GDB</span> <span class="s2">&#34;</span><span class="nv">$LIB</span><span class="s2">/renpy&#34;</span> <span class="s2">&#34;</span><span class="nv">$@</span><span class="s2">&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="k">fi</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 如果以上文件都不存在，输出错误信息</span>
+</span></span><span class="line"><span class="cl"><span class="nb">echo</span> <span class="s2">&#34;</span><span class="nv">$LIB</span><span class="s2">/</span><span class="nv">$BASEFILE</span><span class="s2"> not found.&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="nb">echo</span> <span class="s2">&#34;This game may not support the </span><span class="nv">$RENPY_PLATFORM</span><span class="s2"> platform.&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="nb">exit</span> <span class="m">1</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 退出脚本，返回错误代码 1</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><em><strong>注: 上述代码的注释由 Github Copilot Pro 生成, 我个人不是很熟悉 Liunx, 不能保证其正确性</strong></em></p>
+<p><code>renpy.sh</code> 看起来主要做了以下工作:</p>
+<ol>
+<li>初始化工作路径, 整个 <code>while</code> 块大致就是在做这些工作</li>
+<li>选择 Python 环境. 包括 <code>case</code> 块的这部分的工作</li>
+<li>启动 Python 环境. 我们注意到它启动了在 <code>$LIB</code> 占位符下的 <code>renpy</code>.</li>
+</ol>
+<p>打开 <code>lib</code> 文件夹, 其中的文件结构一目了然: 三个平台对应的可执行 <code>Python</code> 环境 (理解为 Windows, MacOS, Linux 系统下的 python.exe 就行),  和一个 <code>Python3.9</code> 文件夹. 打开该文件夹不难看出, 这个文件夹存放着各种 <code>Python</code> 包, 我们心心念念的 <code>pygame_sdl2</code> 也赫然在列. 也就是说, 虽然 Python 可执行环境在三个平台上不同, 但是其包都是一样的, 没必要保存三份, 因此单独抽出来保存一份即可, 可供三个客户端同时使用.</p>
+<p>现在我们知道了 <code>Ren'Py</code> 使用的 Python 环境和其包存放的位置, 理论上使用该环境执行 <code>renpy.py</code> 脚本, 就能实现和 <code>renpy.exe</code> 相同的效果. 让我们实践出真知:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="n">你的</span> <span class="n">renpy</span><span class="o">.</span><span class="n">exe</span> <span class="n">文件夹路径</span><span class="o">&gt;</span> <span class="o">.</span>\<span class="n">lib</span>\<span class="n">py3</span><span class="o">-</span><span class="n">windows</span><span class="o">-</span><span class="n">x86_64</span>\<span class="n">python</span><span class="o">.</span><span class="n">exe</span> <span class="n">renpy</span><span class="o">.</span><span class="n">py</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>果然, 顺利的打开了 <code>Ren'Py</code> 引擎. 恭喜你, 你成功 <strong>以执行 Python 脚本的形式</strong> 运行了 <code>Ren'Py</code> 引擎. 现在对你而言, 你已经知道了 <code>Ren'py</code> 的程序入口点, 是时候从此入手, 了解 <code>Ren'Py</code> 的运行机制了.</p>
+<hr>
+
+    <blockquote>
+        <p><strong>renpy.exe, .\lib\py3-windows-x86_64\python.exe renpy.py, .\lib\py3-windows-x86_64\renpy.exe 的区别</strong></p>
+<p>你可能会发现, <code>Ren'Py</code> 的根目录下有一个 renpy.exe, <code>.\lib\py3-windows-x86_64\</code> 目录下有 <code>python.exe</code>, <code>pythonw.exe</code>, <code>renpy.exe</code>. 这些个东西究竟有何不同? 我用命令行打开的界面和 renpy.exe 运行的引擎是同一个东西, 还是看上去一模一样的两个东西?</p>
+<p>首先, renpy.exe 我个人觉得就是 Windows 版的 <code>renpy.sh</code> , 它设置了一些工作目录, 随后启动自带的 Python 环境, 并运行 renpy.py, 就这么简单. 至于 python.exe 和 pythonw.exe, 是你在运行 python 脚本的时候是否会弹出一个系统控制台, 就这么简单.</p>
+<p>最后, 两个 renpy.exe有没有什么区别, 我觉得是没有的, 就只是一个拷贝, 仅此而已. 实际上, 你可以计算两个文件的哈希值并进行比较, 得到的结果是完全相同的, 这意味着两个 renpy.exe <strong>完全相同</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span><span class="lnt">58
+</span><span class="lnt">59
+</span><span class="lnt">60
+</span><span class="lnt">61
+</span><span class="lnt">62
+</span><span class="lnt">63
+</span><span class="lnt">64
+</span><span class="lnt">65
+</span><span class="lnt">66
+</span><span class="lnt">67
+</span><span class="lnt">68
+</span><span class="lnt">69
+</span><span class="lnt">70
+</span><span class="lnt">71
+</span><span class="lnt">72
+</span><span class="lnt">73
+</span><span class="lnt">74
+</span><span class="lnt">75
+</span><span class="lnt">76
+</span><span class="lnt">77
+</span><span class="lnt">78
+</span><span class="lnt">79
+</span><span class="lnt">80
+</span><span class="lnt">81
+</span><span class="lnt">82
+</span><span class="lnt">83
+</span><span class="lnt">84
+</span><span class="lnt">85
+</span><span class="lnt">86
+</span><span class="lnt">87
+</span><span class="lnt">88
+</span><span class="lnt">89
+</span><span class="lnt">90
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">hashlib</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">os</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">sys</span>
+</span></span><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Optional</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">calculate_file_hash</span><span class="p">(</span><span class="n">file_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">algorithm</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;sha256&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">  <span class="s2">&#34;&#34;&#34;计算文件的哈希值&#34;&#34;&#34;</span>
+</span></span><span class="line"><span class="cl">  <span class="n">hash_algo</span> <span class="o">=</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">algorithm</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">      <span class="c1"># 分块读取以处理大文件</span>
+</span></span><span class="line"><span class="cl">      <span class="k">for</span> <span class="n">chunk</span> <span class="ow">in</span> <span class="nb">iter</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">4096</span><span class="p">),</span> <span class="sa">b</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">          <span class="n">hash_algo</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">chunk</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="n">hash_algo</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">find_first_difference</span><span class="p">(</span><span class="n">file1</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">file2</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">]]:</span>
+</span></span><span class="line"><span class="cl">  <span class="s2">&#34;&#34;&#34;找出两个文件首次出现差异的位置&#34;&#34;&#34;</span>
+</span></span><span class="line"><span class="cl">  <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file1</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f1</span><span class="p">,</span> <span class="nb">open</span><span class="p">(</span><span class="n">file2</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f2</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">      <span class="n">position</span> <span class="o">=</span> <span class="mi">0</span>
+</span></span><span class="line"><span class="cl">      <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">          <span class="n">chunk1</span> <span class="o">=</span> <span class="n">f1</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">4096</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">          <span class="n">chunk2</span> <span class="o">=</span> <span class="n">f2</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">4096</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">          <span class="c1"># 文件读取结束</span>
+</span></span><span class="line"><span class="cl">          <span class="k">if</span> <span class="ow">not</span> <span class="n">chunk1</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">chunk2</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">              <span class="k">return</span> <span class="kc">None</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">          <span class="c1"># 长度不同</span>
+</span></span><span class="line"><span class="cl">          <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">chunk1</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">chunk2</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">              <span class="n">min_len</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">chunk1</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">chunk2</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">              <span class="c1"># 先检查共同长度的部分</span>
+</span></span><span class="line"><span class="cl">              <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">min_len</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">                  <span class="k">if</span> <span class="n">chunk1</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">!=</span> <span class="n">chunk2</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
+</span></span><span class="line"><span class="cl">                      <span class="k">return</span> <span class="n">position</span> <span class="o">+</span> <span class="n">i</span><span class="p">,</span> <span class="n">chunk1</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">],</span> <span class="n">chunk2</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">              <span class="c1"># 如果共同长度部分都相同，差异在于一个文件比另一个长</span>
+</span></span><span class="line"><span class="cl">              <span class="k">return</span> <span class="n">position</span> <span class="o">+</span> <span class="n">min_len</span><span class="p">,</span> <span class="n">chunk1</span><span class="p">[</span><span class="n">min_len</span><span class="p">:</span><span class="n">min_len</span> <span class="o">+</span>
+</span></span><span class="line"><span class="cl">                                                <span class="mi">1</span><span class="p">]</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">chunk1</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">min_len</span> <span class="k">else</span> <span class="sa">b</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">chunk2</span><span class="p">[</span><span class="n">min_len</span><span class="p">:</span><span class="n">min_len</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">chunk2</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">min_len</span> <span class="k">else</span> <span class="sa">b</span><span class="s1">&#39;&#39;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">          <span class="c1"># 检查内容</span>
+</span></span><span class="line"><span class="cl">          <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">chunk1</span><span class="p">)):</span>
+</span></span><span class="line"><span class="cl">              <span class="k">if</span> <span class="n">chunk1</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">!=</span> <span class="n">chunk2</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
+</span></span><span class="line"><span class="cl">                  <span class="k">return</span> <span class="n">position</span> <span class="o">+</span> <span class="n">i</span><span class="p">,</span> <span class="n">chunk1</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">],</span> <span class="n">chunk2</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">          <span class="n">position</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="n">chunk1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">compare_files</span><span class="p">(</span><span class="n">file1</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">file2</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">  <span class="s2">&#34;&#34;&#34;比较两个二进制文件&#34;&#34;&#34;</span>
+</span></span><span class="line"><span class="cl">  <span class="c1"># 检查文件是否存在</span>
+</span></span><span class="line"><span class="cl">  <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="p">[</span><span class="n">file1</span><span class="p">,</span> <span class="n">file2</span><span class="p">]:</span>
+</span></span><span class="line"><span class="cl">      <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">file</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">          <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&#34;错误: 文件 &#39;</span><span class="si">{</span><span class="n">file</span><span class="si">}</span><span class="s2">&#39; 不存在&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">          <span class="k">return</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="c1"># 比较文件大小</span>
+</span></span><span class="line"><span class="cl">  <span class="n">size1</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">getsize</span><span class="p">(</span><span class="n">file1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="n">size2</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">getsize</span><span class="p">(</span><span class="n">file2</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&#34;文件1: </span><span class="si">{</span><span class="n">file1</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="n">size1</span><span class="si">}</span><span class="s2"> 字节)&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&#34;文件2: </span><span class="si">{</span><span class="n">file2</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="n">size2</span><span class="si">}</span><span class="s2"> 字节)&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="n">size1</span> <span class="o">!=</span> <span class="n">size2</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">      <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&#34;文件大小不同: </span><span class="si">{</span><span class="n">size1</span><span class="si">}</span><span class="s2"> vs </span><span class="si">{</span><span class="n">size2</span><span class="si">}</span><span class="s2"> 字节&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="c1"># 计算和比较哈希值</span>
+</span></span><span class="line"><span class="cl">  <span class="n">hash1</span> <span class="o">=</span> <span class="n">calculate_file_hash</span><span class="p">(</span><span class="n">file1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="n">hash2</span> <span class="o">=</span> <span class="n">calculate_file_hash</span><span class="p">(</span><span class="n">file2</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&#34;文件1 SHA256: </span><span class="si">{</span><span class="n">hash1</span><span class="si">}</span><span class="s2">&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&#34;文件2 SHA256: </span><span class="si">{</span><span class="n">hash2</span><span class="si">}</span><span class="s2">&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="n">hash1</span> <span class="o">==</span> <span class="n">hash2</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">      <span class="nb">print</span><span class="p">(</span><span class="s2">&#34;文件内容完全相同&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">      <span class="k">return</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="nb">print</span><span class="p">(</span><span class="s2">&#34;文件内容不同&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="c1"># 查找第一个差异位置</span>
+</span></span><span class="line"><span class="cl">  <span class="n">diff</span> <span class="o">=</span> <span class="n">find_first_difference</span><span class="p">(</span><span class="n">file1</span><span class="p">,</span> <span class="n">file2</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="n">diff</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">      <span class="n">position</span><span class="p">,</span> <span class="n">byte1</span><span class="p">,</span> <span class="n">byte2</span> <span class="o">=</span> <span class="n">diff</span>
+</span></span><span class="line"><span class="cl">      <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&#34;首次差异位置: 字节 </span><span class="si">{</span><span class="n">position</span><span class="si">}</span><span class="s2">&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">      <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&#34;文件1内容: </span><span class="si">{</span><span class="n">byte1</span><span class="o">.</span><span class="n">hex</span><span class="p">()</span><span class="si">}</span><span class="s2">&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">      <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&#34;文件2内容: </span><span class="si">{</span><span class="n">byte2</span><span class="o">.</span><span class="n">hex</span><span class="p">()</span><span class="si">}</span><span class="s2">&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">compare_files</span><span class="p">(</span><span class="s2">&#34;./renpy.exe&#34;</span><span class="p">,</span> <span class="s2">&#34;./lib/py3-windows-x86_64/renpy.exe&#34;</span><span class="p">)</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><em><strong>注: 该代码由 Github Copilot Pro 生成</strong></em></p>
+
+    </blockquote>
+<h2 id="3-正式潜入-renpy"><a href="#3-%e6%ad%a3%e5%bc%8f%e6%bd%9c%e5%85%a5-renpy" class="header-anchor"></a>3. 正式潜入 <code>Ren'Py</code>
+</h2><h3 id="31-object-renpy-的终极基类"><a href="#31-object-renpy-%e7%9a%84%e7%bb%88%e6%9e%81%e5%9f%ba%e7%b1%bb" class="header-anchor"></a>3.1 <code>Object</code>: Ren&rsquo;Py 的终极基类
+</h3><p>在大致浏览 <code>renpy</code> 文件夹时, 很容易通过文件名称和文件夹名称猜测出各模块的作用. 其中, <code>object.py</code> 自然是我们首要关注的对象. 对于大部分 <strong>面向对象</strong> 的编程语言而言, <code>object</code> 类往往是所有类的基类, 定义了一些对于解释器/运行时而言十分重要的功能(比如实例的相等性比较和同一性比较)</p>
+<p>然而, Ren&rsquo;Py 的 Object 类并没有定义太多的方法和字段, 并且几乎只是重写了两个几乎很少用到的 <em>dunder</em> 方法: <code>__setstate__</code> 和 <code>__getstate__</code>, 以及定义了一个类似于事件的函数列表 <code>after_setstate</code></p>
+<p><del><em>方法足够少, 适合作为一章的开始</em></del></p>
+<p><code>__setstate__</code> 和 <code>__getstate__</code> 主要用于类的序列化/反序列化. 在 Python 里, 序列化/反序列化不同于 <code>.NET</code> 的 <code>Serialization</code>, 通过 json 或者字典的格式保存/读取类的属性, 而是把类直接以二进制字节流的方式保存至磁盘/读取到内存. 大致可以想象为把类在内存里那一串 &ldquo;0101&rdquo; 直接复制出来写到一个文件里,读取时直接把它搬到内存里. 这个序列化过程一般通过 <code>pickle</code> 包实现, 文件后缀一般为 <code>.pkl</code>.</p>
+
+    <blockquote>
+        <p>大名鼎鼎的 Python 数据处理的库 <code>Pandas</code> 的首选推荐方法即为 <code>DataFrame.to_pickle()</code></p>
+<p><em>.NET 和 pkl 对应的应该是 &lsquo;bin&rsquo;, 如果你在老软件的目录下见过以 <code>.bin</code> 结尾的文件, 那很有可能是序列化的 .NET 对象, 但和 <code>*.bin</code> 相关的方法已经过时了, .NET 并不推荐使用 (使用 <code>NewtonSoft.Json</code> 或者 <code>System.Text.Json</code> 是推荐的替代方案)</em></p>
+
+    </blockquote>
+<p>了解了什么是序列化/反序列化后, 再来看 <code>Object</code> 类的作用: 它修改了默认的序列化机制, 通过定义类的 <code>nosave</code> 字段, 把不需要序列化的属性/字段名添加到 <code>nosave</code> 里, 序列化时 Python就会忽略它们. <code>after_setstate</code>内的所有函数在 反序列化过程 <code>__setstate__</code> 方法最后会被调用, 可以向里面注册任何需要的函数. 比如简单注册一个打印到控制台函数:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="n">after_setstate</span> <span class="o">=</span> <span class="p">[</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="s2">&#34;Object 已被反序列化&#34;</span><span class="p">)]</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>都有什么类继承了 <code>Object</code> 类呢? 借助 IDE 可以很方便的获得如下结果:</p>
+
+    <blockquote>
+        <p>renpy/atl.py
+420, 7: class ATLTransformBase(renpy.object.Object):
+879, 7: class Statement(renpy.object.Object):</p>
+<p>renpy/character.py
+891, 7: class HistoryEntry(renpy.object.Object):</p>
+<p>renpy/common/00db_ren.py
+30, 7: class_JSONDBDict(_dict):</p>
+<p>renpy/display/behavior.py
+1877, 7: class Adjustment(renpy.object.Object):</p>
+<p>renpy/display/displayable.py
+82, 7: class DisplayableArguments(renpy.object.Object):
+137, 7: class Displayable(renpy.object.Object):</p>
+<p>renpy/display/image.py
+799, 7: class ShownImageInfo(renpy.object.Object):</p>
+<p>renpy/display/imagemap.py
+79, 7: class ImageMapCache(renpy.object.Object):</p>
+<p>renpy/display/layout.py
+1324, 7: class SizeGroup(renpy.object.Object):</p>
+<p>renpy/display/particle.py
+35, 7: class SpriteCache(renpy.object.Object):
+64, 7: class Sprite(renpy.object.Object):</p>
+<p>renpy/display/scenelists.py
+49, 7: class SceneListEntry(renpy.object.Object):
+122, 7: class SceneLists(renpy.object.Object):</p>
+<p>renpy/display/screen.py
+41, 7: class ScreenProfile(renpy.object.Object):
+198, 7: class Screen(renpy.object.Object):</p>
+<p>renpy/display/transform.py
+37, 7: class Camera(renpy.object.Object):
+91, 7: class TransformState(renpy.object.Object):</p>
+<p>renpy/execution.py
+92, 7: class PredictInfo(renpy.object.Object):
+123, 7: class Context(renpy.object.Object):</p>
+<p>renpy/object.py
+40, 7: class Object(object):</p>
+<p>renpy/parameter.py
+458, 7: class ArgumentInfo(renpy.object.Object):</p>
+<p>renpy/preferences.py
+219, 7: class Preferences(renpy.object.Object):</p>
+<p>renpy/python.py
+115, 7: class StoreDict(dict):</p>
+<p>renpy/revertable.py
+273, 7: class RevertableDict(dict):</p>
+<p>renpy/rollback.py
+206, 7: class Rollback(renpy.object.Object):
+428, 7: class RollbackLog(renpy.object.Object):</p>
+<p>renpy/screenlang.py
+28, 7: class ScreenLangScreen(renpy.object.Object):</p>
+<p>renpy/test/testast.py
+29, 7: class TestSettings(renpy.object.Object):</p>
+<p>renpy/ui.py
+41, 7: class Action(renpy.object.Object):
+68, 7: class BarValue(renpy.object.Object):
+442, 7: class Wrapper(renpy.object.Object):</p>
+
+    </blockquote>
+<p>显然, 通过名字就不难看出这些类或多或少都与存档/读档有关. 可以简单想象为在存档时, Ren&rsquo;Py 会把角色的位置, 说的话, 播放的BGM, 显示的背景等必要的信息保存到存档文件里, 在读档时通过这些信息将游戏恢复到存档前的状态.</p>
+<h3 id="32-sentinel-属于-renpy-的单例模式"><a href="#32-sentinel-%e5%b1%9e%e4%ba%8e-renpy-%e7%9a%84%e5%8d%95%e4%be%8b%e6%a8%a1%e5%bc%8f" class="header-anchor"></a>3.2 <code>Sentinel</code>: 属于 Ren&rsquo;Py 的单例模式
+</h3><p>在 <code>object.py</code> 文件下面, 还有一个名为 <code>Sentinel</code> 的类, 这个类简直是 Python <strong>单例模式</strong>的教科书: 它重写了 <code>__new__</code> 方法, 使得在程序运行期间, 有且仅有一个名为 <code>name</code> 的 <code>Sentinel</code> 对象.</p>
+
+    <blockquote>
+        <p><em>Python 的 <strong>实例化</strong> 和 <strong>初始化</strong></em></p>
+<p>众所周知, <strong>面向对象</strong> 的编程语言在创建一个对象的实例时, 一般会分为两个步骤:</p>
+<ol>
+<li>为要创建的对象分配内存. 在可用的内存位置中标记指定长度的内存, 把占据这块内存的数据认为是对象的数据. 这个阶段是 <strong>实例化</strong>, 也就是 Python 中的 <code>__new__</code> 方法. 也就是说, 在调用 <code>__new__</code> 之后, Python 就认为创建的对象已经存在了, 因此 <code>__new__</code> 方法才 <strong>需要</strong> 一个返回值, 返回的是实例化的对象 (在这个语境下, 用 &ldquo;返回被标记为新建立的对象的内存位置&rdquo;)</li>
+<li>在 <strong>创建对象之后</strong>, 给对象的各个字段设置初始值, 这个阶段是 <strong>初始化</strong>, 也就是 Python 中的 <code>__init__</code> 方法. 刚刚提到, 已经把某一块内存标记为对象的数据. 这段内存肯定不是从未使用过的, 它上面肯定有值(一串看起来毫无规律的0101), 如果不对对象进行初始化, 很难保证创建对象时的统一性. 这些残留的值会以难以预见的奇怪方式解释为当前占用这段内存对象的状态. 因此, 需要为对象设置 <strong>初始状态</strong>, 这就是初始化. 因此 <code>__init__</code> 方法才 <strong>不需要</strong> 返回值, 因为 <code>__init__</code> 只是在操作一个已经存在的对象.</li>
+</ol>
+<p>从这个角度出发, 不难理解为什么 Python 的实例方法需要首先传入一个 <code>self</code>了, 这对于 Python 解释器来说, 指明了是在操作哪个对象. 相应地, <code>__new__</code> 传入的是一个 <code>cls</code>,  对于 Python 解释器来说, 指明了是要创建哪个类的实例</p>
+
+    </blockquote>
+<p><code>Sentinel</code> 的单例模式借助一个字典 <code>sentinels</code> 实现, 其中 key 为 <code>Sentinel</code> 对象的 <code>name</code> 属性, 值为 该 <code>Sentinel</code> 对象. 在有实例化需求时, Ren&rsquo;Py 会先检查 <code>sentinels</code> 中是否有 key 为指定 &ldquo;name&rdquo; 的 <code>Sentinel</code> 对象, 如果有的话直接返回该对象, 不再创建新对象. 如果没有, 再进行对象的创建, 并添加到字典中.</p>
+<p><code>Sentinel</code> 类在如下模块中被使用:</p>
+
+    <blockquote>
+        <p>renpy/ast.py
+257, 30: DoesNotExtend = renpy.object.Sentinel(&ldquo;DoesNotExtend&rdquo;)
+279, 42: Union[str, renpy.object.Sentinel] = None  # type: str|None|renpy.object.Sentinel</p>
+<p>renpy/atl.py
+396, 29: NotInContext = renpy.object.Sentinel(&ldquo;NotInContext&rdquo;)</p>
+<p>renpy/audio/audio.py
+64, 30: AudioNotReady = renpy.object.Sentinel(&ldquo;AudioNotReady&rdquo;)
+224, 23: NotSet = renpy.object.Sentinel(&ldquo;NotSet&rdquo;)</p>
+<p>renpy/character.py
+921, 23: NotSet = renpy.object.Sentinel(&ldquo;NotSet&rdquo;)
+966, 60: str|None|renpy.object.Sentinel, Literal[False]|None|ADVCharacter, Any) -&gt; None</p>
+<p>renpy/loader.py
+1006, 33: auto_blacklisted = renpy.object.Sentinel(&ldquo;auto_blacklisted&rdquo;)</p>
+<p>renpy/loadsave.py
+898, 24: unknown = renpy.object.Sentinel(&ldquo;unknown&rdquo;)</p>
+<p>renpy/object.py
+85, 23: sentinels: dict[str, &ldquo;Sentinel&rdquo;] = {}
+89, 7: class Sentinel(object):
+99, 37: __new__(cls, name: str) -&gt; &ldquo;Sentinel&rdquo;:
+112, 17:         return (Sentinel, (self.name, ))</p>
+<p>renpy/sl2/slast.py
+62, 31: use_expression = renpy.object.Sentinel(&ldquo;use_expression&rdquo;)
+374, 25: NotGiven = renpy.object.Sentinel(&ldquo;NotGiven&rdquo;)</p>
+<p>renpy/sl2/slparser.py
+480, 21: many = renpy.object.Sentinel(&ldquo;many&rdquo;)
+611, 140: &ldquo;many&rdquo;]|renpy.object.Sentinel, bool, bool, bool, bool, dict[str, Any], bool, bool, bool) -&gt; None</p>
+<p>renpy/translation/__init__.py
+597, 24: Default = renpy.object.Sentinel(&ldquo;default&rdquo;)</p>
+<p>renpy/ui.py
+412, 35: NoStylePrefixGiven = renpy.object.Sentinel(&ldquo;NoStylePrefixGiven&rdquo;)</p>
+
+    </blockquote>
+
+</section>
+
+
+    <footer class="article-meta article-footer">
+    
+
+    
+    <section class="article-copyright inline-meta">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>使用 CC BY-NC-SA 4.0 协议</span>
+    </section>
+    </footer>
+
+
+    
+</article>
+
+    
+
+    
+
+     
+    
+        
+
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+        2026 水之氷的赛博功德箱
+    </section>
+    
+    <section class="powerby">
+        使用 <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> 构建 <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="4.0.3">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+    </section>
+</footer>
+
+
+    
+
+
+
+<script type="module">
+    import gallery from '\/ts\/gallery.js';
+
+    const articleContent = document.querySelector('.article-content');
+    const shouldLoad = articleContent && (articleContent.querySelectorAll('figure').length > 0 || articleContent.querySelectorAll('img.gallery-image').length > 0);
+    
+    if (shouldLoad) {
+        gallery(articleContent);
+
+        const PhotoSwipeLightbox = (await import("https:\/\/cdn.jsdelivr.net\/npm\/photoswipe@5.4.4\/dist\/photoswipe-lightbox.esm.min.js")).default;
+        const styleHref = "https:\/\/cdn.jsdelivr.net\/npm\/photoswipe@5.4.4\/dist\/photoswipe.css";
+
+        const styleTag = document.createElement('link');
+        styleTag.rel = 'stylesheet';
+        styleTag.href = styleHref;
+        document.head.appendChild(styleTag);
+
+        const lightbox = new PhotoSwipeLightbox({
+            gallerySelector: '.article-content',
+            childSelector: 'figure a.image-link',
+            pswpModule: () => import("https:\/\/cdn.jsdelivr.net\/npm\/photoswipe@5.4.4\/dist\/photoswipe.esm.min.js")
+        });
+        lightbox.init();
+    }
+</script>
+
+    
+
+            </main>
+        </div>
+        
+<script type="text/javascript" src="/ts/main.42306f6c0080215dd53597d24fbd62e73b8ce3ad3038ad1e53ce57e46c8efa70.js" defer></script>
+
+
+    </body>
+</html>
