@@ -3,11 +3,16 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>https://minokori.github.io/blog/</loc>
+    <lastmod>2026-07-23T20:44:13+08:00</lastmod>
+  </url><url>
+    <loc>https://minokori.github.io/blog/renpy/introduction/</loc>
+    <lastmod>2026-07-23T20:44:13+08:00</lastmod>
+  </url><url>
+    <loc>https://minokori.github.io/</loc>
+    <lastmod>2026-07-23T20:44:13+08:00</lastmod>
   </url><url>
     <loc>https://minokori.github.io/categories/</loc>
   </url><url>
     <loc>https://minokori.github.io/tags/</loc>
-  </url><url>
-    <loc>https://minokori.github.io/</loc>
   </url>
 </urlset>
